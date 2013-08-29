@@ -544,6 +544,20 @@ static int __init ssr_init_soc_restart_orders(void)
 	atomic_notifier_chain_register(&panic_notifier_list,
 			&panic_nb);
 
+#if defined(CONFIG_MACH_APQ8064_FLO) || defined(CONFIG_MACH_APQ8064_DEB)
+	for (i = 0; i < ARRAY_SIZE(orders_8x60_all); i++) {
+		mutex_init(&orders_8x60_all[i]->powerup_lock);
+		mutex_init(&orders_8x60_all[i]->shutdown_lock);
+	}
+
+	for (i = 0; i < ARRAY_SIZE(orders_8x60_modems); i++) {
+		mutex_init(&orders_8x60_modems[i]->powerup_lock);
+		mutex_init(&orders_8x60_modems[i]->shutdown_lock);
+	}
+
+	restart_orders = orders_8x60_all;
+	n_restart_orders = ARRAY_SIZE(orders_8x60_all);
+#else
 	if (cpu_is_msm8x60()) {
 		for (i = 0; i < ARRAY_SIZE(orders_8x60_all); i++) {
 			mutex_init(&orders_8x60_all[i]->powerup_lock);
@@ -558,6 +572,7 @@ static int __init ssr_init_soc_restart_orders(void)
 		restart_orders = orders_8x60_all;
 		n_restart_orders = ARRAY_SIZE(orders_8x60_all);
 	}
+#endif
 
 	if (socinfo_get_platform_subtype() == PLATFORM_SUBTYPE_SGLTE) {
 		restart_orders = restart_orders_8960_sglte;
