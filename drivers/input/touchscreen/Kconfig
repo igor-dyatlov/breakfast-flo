@@ -972,5 +972,16 @@ config TOUCHSCREEN_ELAN_TF_3K
         help
           To compile this driver as a module, choose M here: the
           module will be called atmel_tsadcc.
+
+config TOUCHSCREEN_STATE_NOTIFIER
+	bool "Notify screen state to touch driver"
+	depends on TOUCHSCREEN_ELAN_TF_3K && EARLYSUSPEND
+	help
+	  This driver is used as a screen state notifier. It gets the
+	  current screen state from ektf3k driver and works mostly the same
+	  as Early Suspend notifier, but has a deffered timer.
+
+	  If unsure, say N.
+
 endif
 

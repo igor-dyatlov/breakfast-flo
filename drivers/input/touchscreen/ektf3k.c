@@ -37,6 +37,10 @@
 #include <linux/proc_fs.h>
 #include <linux/wakelock.h>
 
+#ifdef CONFIG_TOUCHSCREEN_STATE_NOTIFIER
+#include <linux/input/state_notifier.h>
+#endif
+
 #define PACKET_SIZE		40
 #define NEW_PACKET_SIZE 55
 #define FINGER_NUM		10
@@ -1754,6 +1758,11 @@ static void elan_ktf3k_ts_early_suspend(struct early_suspend *h)
 {
 	struct elan_ktf3k_ts_data *ts;
 	ts = container_of(h, struct elan_ktf3k_ts_data, early_suspend);
+
+#ifdef CONFIG_TOUCHSCREEN_STATE_NOTIFIER
+	state_suspend();
+#endif
+
 	elan_ktf3k_ts_suspend(ts->client, PMSG_SUSPEND);
 }
 
@@ -1761,6 +1770,11 @@ static void elan_ktf3k_ts_late_resume(struct early_suspend *h)
 {
 	struct elan_ktf3k_ts_data *ts;
 	ts = container_of(h, struct elan_ktf3k_ts_data, early_suspend);
+
+#ifdef CONFIG_TOUCHSCREEN_STATE_NOTIFIER
+	state_resume();
+#endif
+
 	elan_ktf3k_ts_resume(ts->client);
 }
 #endif
