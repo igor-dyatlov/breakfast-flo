@@ -2618,4 +2618,13 @@ config MSM_CPU_PWRCTL
 	  stand alone power collapse operation. Selecting this option
 	  ensures that they are always off.
 
+config FORCE_FAST_CHARGE
+	bool "Force fast charging (USB)"
+	depends on BATTERY_ASUS_BQ27541
+	default y
+	help
+	  A simple sysfs interface that makes current limit changeable. It can
+	  be used to improve charging speed by increasing current limits for
+	  USB power supply.
+
 endif

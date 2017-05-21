@@ -55,6 +55,10 @@
 #include <linux/gpio.h>
 #include <asm/mach-types.h>
 
+#ifdef CONFIG_FORCE_FAST_CHARGE
+#include <linux/power/fastchg.h>
+#endif
+
 #define MSM_USB_BASE	(motg->regs)
 #define DRIVER_NAME	"msm_otg"
 
@@ -1228,6 +1232,17 @@ static void msm_otg_notify_charger(struct msm_otg *motg, unsigned mA)
 
 	if (motg->cur_power == mA)
 		return;
+
+#ifdef CONFIG_FORCE_FAST_CHARGE
+	/*
+	 * Fast Charge main code.
+	 *
+	 * Unlike hammerhead implementation, this just replaces USB current
+	 * with the value taken from Fast Charge module.
+	 */
+	if (force_fast_charge == FAST_CHARGE_ENABLED)
+		mA = usb_charge_level;
+#endif
 
 	dev_info(motg->phy.dev, "Avail curr from USB = %u\n", mA);
 
