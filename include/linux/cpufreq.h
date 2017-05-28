@@ -350,7 +350,7 @@ static inline unsigned int cpufreq_quick_get_max(unsigned int cpu)
 #endif
 
 /* cpufreq limits */
-#define CPUFREQ_MAX_FREQ 1512000
+#define CPUFREQ_MAX_FREQ 1890000
 #define CPUFREQ_MIN_FREQ 384000
 
 /*********************************************************************
