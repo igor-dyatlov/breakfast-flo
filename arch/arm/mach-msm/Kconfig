@@ -178,6 +178,7 @@ config ARCH_MSM8960
 	select MSM_KRAIT_WFE_FIXUP
 	select MSM_IOMMU_GPU_SYNC
 	select MSM_CPU_PWRCTL
+	select HAS_MACH_MEMUTILS
 
 config ARCH_MSM8930
 	bool "MSM8930"
@@ -241,6 +242,7 @@ config ARCH_APQ8064
 	select MSM_KRAIT_WFE_FIXUP
 	select MSM_IOMMU_GPU_SYNC
 	select MSM_CPU_PWRCTL
+	select HAS_MACH_MEMUTILS
 
 config ARCH_MSM8974
 	bool "MSM8974"
@@ -2605,5 +2607,11 @@ config FORCE_FAST_CHARGE
 	  A simple sysfs interface that makes current limit changeable. It can
 	  be used to improve charging speed by increasing current limits for
 	  USB power supply.
+
+config HAS_MACH_MEMUTILS
+	bool "Motorola MSM memcpy enhancements"
+	depends on ARCH_MSM
+	help
+	  Faster memcpy performance for Krait.
 
 endif
