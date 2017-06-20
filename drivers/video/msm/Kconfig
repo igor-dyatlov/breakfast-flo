@@ -89,6 +89,13 @@ config FB_MSM_MDP40
 	  Support for MSM MDP HW revision 4.0
 	  Say Y here if this is msm7x30 variant platform.
 
+config FB_MSM_MDP_KCAL_CTRL
+	depends on FB_MSM_MDP40
+	bool "MDP4 color control"
+	---help---
+	  Enable sysfs for post-processing control of mdss-mdp4 display
+	  controllers.
+
 config FB_MSM_MDSS
 	bool "MDSS HW"
 	---help---
