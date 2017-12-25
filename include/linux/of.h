@@ -311,6 +311,14 @@ static inline int of_property_read_string_index(struct device_node *np,
 	return -ENOSYS;
 }
 
+static inline int of_property_match_string(struct device_node *np,
+					   const char *propname,
+					   const char *string)
+{
+	/* Workaround to achieve compatibility with newer modules */
+	return 0;
+}
+
 static inline int of_property_count_strings(struct device_node *np,
 					    const char *propname)
 {
