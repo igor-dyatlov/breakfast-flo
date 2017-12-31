@@ -3975,6 +3975,23 @@ static unsigned int tabla_read(struct snd_soc_codec *codec,
 	return val;
 }
 
+static int tabla_filter(struct snd_soc_codec *codec, unsigned int reg)
+{
+	struct tabla_priv *tabla = snd_soc_codec_get_drvdata(codec);
+	struct snd_ctrl_data *snd_data = tabla->ctrl_data;
+	int i;
+
+	if (!snd_ctrl_data_handled(snd_data) ||
+	    !snd_ctrl_has_bit(snd_data, SND_CTRL_BYPASS_IOCTL))
+		return 0;
+
+	for (i = 0; i < NUM_SND_LINES; i++)
+		if (reg == snd_data->lines[i].reg)
+			return -EINVAL;
+
+	return 0;
+}
+
 static s16 tabla_get_current_v_ins(struct tabla_priv *tabla, bool hu)
 {
 	s16 v_ins;
@@ -8489,6 +8506,7 @@ static int tabla_codec_probe(struct snd_soc_codec *codec)
 	tabla->ctrl_data->name = codec->name;
 	tabla->ctrl_data->read = &tabla_read;
 	tabla->ctrl_data->write = &tabla_write;
+	tabla->ctrl_data->flags = SND_CTRL_BYPASS_IOCTL;
 
 	ret = snd_ctrl_register(tabla->ctrl_data);
 	if (IS_ERR_VALUE(ret)) {
@@ -8720,6 +8738,7 @@ static struct snd_soc_codec_driver soc_codec_dev_tabla = {
 	.remove	= tabla_codec_remove,
 	.read = tabla_read,
 	.write = tabla_write,
+	.filter = tabla_filter,
 	.readable_register = tabla_readable,
 	.volatile_register = tabla_volatile,
 
