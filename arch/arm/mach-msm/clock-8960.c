@@ -3530,7 +3530,7 @@ static struct clk_freq_tbl clk_tbl_gfx3d[] = {
 	F_GFX3D(266667000, pll2,  1,  3),
 	F_GFX3D(320000000, pll2,  2,  5),
 	F_GFX3D(400000000, pll2,  1,  2),
-	F_GFX3D(450000000, pll15, 1,  2),
+	F_GFX3D(500000000, pll15, 1,  2),
 	F_END
 };
 
@@ -3577,16 +3577,10 @@ static struct clk_freq_tbl clk_tbl_gfx3d_8930ab[] = {
 	F_END
 };
 
-static unsigned long fmax_gfx3d_8064ab[VDD_DIG_NUM] = {
-	[VDD_DIG_LOW]     = 128000000,
-	[VDD_DIG_NOMINAL] = 325000000,
-	[VDD_DIG_HIGH]    = 450000000
-};
-
 static unsigned long fmax_gfx3d_8064[VDD_DIG_NUM] = {
 	[VDD_DIG_LOW]     = 128000000,
-	[VDD_DIG_NOMINAL] = 325000000,
-	[VDD_DIG_HIGH]    = 400000000
+	[VDD_DIG_NOMINAL] = 320000000,
+	[VDD_DIG_HIGH]    = 500000000
 };
 
 static unsigned long fmax_gfx3d_8930[VDD_DIG_NUM] = {
@@ -6567,16 +6561,11 @@ static void __init reg_init(void)
 		/* Program prng_clk to 64MHz if it isn't configured */
 		if (!readl_relaxed(PRNG_CLK_NS_REG))
 			writel_relaxed(0x2B, PRNG_CLK_NS_REG);
-	}
 
-	if (cpu_is_apq8064() || cpu_is_apq8064aa()) {
-		/* Program PLL15 to 975MHz with ref clk = 27MHz */
-		configure_sr_pll(&pll15_config, &pll15_regs, 0);
-	} else if (cpu_is_apq8064ab()) {
-		/* Program PLL15 to 900MHZ */
-		pll15_config.l = 0x21 | BVAL(31, 7, 0x620);
-		pll15_config.m = 0x1;
-		pll15_config.n = 0x3;
+		/* Reprogram PLL to 1000MHz */
+		pll15_config.l = 0x25 | BVAL(31, 7, 0x600);
+		pll15_config.m = 0x25;
+		pll15_config.n = 0x3E7;
 		configure_sr_pll(&pll15_config, &pll15_regs, 0);
 	}
 
@@ -6650,12 +6639,6 @@ static void __init msm8960_clock_pre_init(void)
 	 * Change the freq tables for and voltage requirements for
 	 * clocks which differ between chips.
 	 */
-	if (cpu_is_apq8064() || cpu_is_apq8064aa()) {
-		gfx3d_clk.c.fmax = fmax_gfx3d_8064;
-	}
-	if (cpu_is_apq8064ab()) {
-		gfx3d_clk.c.fmax = fmax_gfx3d_8064ab;
-	}
 	if ((cpu_is_apq8064() &&
 		SOCINFO_VERSION_MAJOR(socinfo_get_version()) == 2) ||
 		cpu_is_apq8064ab() || cpu_is_apq8064aa()) {
@@ -6665,6 +6648,8 @@ static void __init msm8960_clock_pre_init(void)
 		sdc1_clk.c.fmax = fmax_sdc1_8064v2;
 	}
 	if (soc_class_is_apq8064()) {
+		pll15_clk.c.rate = 1000000000;
+		gfx3d_clk.c.fmax = fmax_gfx3d_8064;
 		ijpeg_clk.c.fmax = fmax_ijpeg_8064;
 		mdp_clk.c.fmax = fmax_mdp_8064;
 		tv_src_clk.c.fmax = fmax_tv_src_8064;
