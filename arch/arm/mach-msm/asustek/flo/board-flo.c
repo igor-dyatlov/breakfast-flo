@@ -45,6 +45,7 @@
 #include <asm/hardware/gic.h>
 #include <asm/mach/mmc.h>
 #include <linux/platform_data/qcom_wcnss_device.h>
+#include <linux/platform_data/wcd9xxx-snd-ctrl.h>
 
 #include <mach/board.h>
 #include <mach/msm_iomap.h>
@@ -2140,6 +2141,41 @@ static struct msm_thermal_data msm_thermal_pdata = {
 	.freq_step = 2,
 };
 
+static struct snd_ctrl_pdata wcd9xxx_ctrl_pdata = {
+	.name  = "tabla_codec",
+	.lines = {
+		[MIC_LINE] = {
+			.reg = 0x249,
+			.val = 5,
+		},
+		[CAM_MIC_LINE] = {
+			.reg = 0x251,
+			.val = 5,
+		},
+		[SPEAKER_L_LINE] = {
+			.reg = 0x2C7,
+			.val = 5,
+		},
+		[SPEAKER_R_LINE] = {
+			.reg = 0x2CF,
+			.val = 5,
+		},
+		[HEADPHONE_L_LINE] = {
+			.reg = 0x2B7,
+			.val = 3,
+		},
+		[HEADPHONE_R_LINE] = {
+			.reg = 0x2BF,
+			.val = 3,
+		},
+	},
+};
+
+static struct platform_device snd_ctrl_pdev = {
+	.name = "wcd9xxx-snd-ctrl",
+	.dev  = { .platform_data = &wcd9xxx_ctrl_pdata },
+};
+
 #define MSM_SHARED_RAM_PHYS 0x80000000
 static void __init apq8064_map_io(void)
 {
@@ -2743,6 +2779,7 @@ static struct platform_device *common_devices[] __initdata = {
 #endif
 	&apq8064_iommu_domain_device,
 	&msm_tsens_device,
+	&snd_ctrl_pdev,
 	&apq8064_cache_dump_device,
 	&msm_8064_device_tspp,
 #ifdef CONFIG_BATTERY_BCL
