@@ -947,6 +947,16 @@ config CC_OPTIMIZE_FOR_SIZE
 
 	  If unsure, say Y.
 
+config CC_OPTIMIZE_AGGRESSIVE_SNAPDRAGON
+	bool "Aggressive optimizations for QCOM Snapdragon"
+	depends on ARCH_APQ8064 || ARCH_MSM8974
+	help
+	  Enable aggressive optimization flags along with GRAPHITE, loop
+	  load elimination and Cortex-A15 related GCC capabilities
+	  explicitly for Qualcomm Snapdragon boards.
+
+	  If unsure, say N.
+
 config SYSCTL
 	bool
 

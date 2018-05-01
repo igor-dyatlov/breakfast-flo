@@ -563,6 +563,32 @@ endif # $(dot-config)
 # Defaults to vmlinux, but the arch makefile usually adds further targets
 all: vmlinux
 
+# Snapdragon specific compilation adjustments
+ifdef CONFIG_CC_OPTIMIZE_AGGRESSIVE_SNAPDRAGON
+GRAPHITE	:= -fgraphite -fgraphite-identity \
+		   -floop-nest-optimize -floop-parallelize-all \
+		   -floop-interchange -ftree-loop-distribution
+
+HOSTCFLAGS	+= -fgcse-las $(GRAPHITE)
+HOSTCXXFLAGS	+= -fgcse-las $(GRAPHITE)
+
+REAL_CC		+= $(GRAPHITE)
+CPP		+= $(GRAPHITE)
+
+KERNELFLAGS	:= -mcpu=cortex-a15 -mtune=cortex-a15 -marm -mfpu=neon-vfpv4 \
+		   -fsingle-precision-constant -mvectorize-with-neon-quad \
+		   -munaligned-access -fsched-spec-load -ftree-vectorize \
+		   -fvect-cost-model=dynamic -fpredictive-commoning \
+		   -finline-functions -findirect-inlining \
+		   $(GRAPHITE)
+MODFLAGS	:= -DMODULE $(KERNELFLAGS)
+CFLAGS_MODULE	+= $(MODFLAGS)
+AFLAGS_MODULE	+= $(MODFLAGS)
+LDFLAGS_MODULE	+= -T $(srctree)/scripts/module-common.lds
+CFLAGS_KERNEL	+= $(KERNELFLAGS)
+AFLAGS_KERNEL	+= $(KERNELFLAGS)
+endif
+
 KBUILD_CFLAGS	+= $(call cc-disable-warning,maybe-uninitialized,)
 ifdef CONFIG_CC_OPTIMIZE_FOR_SIZE
 KBUILD_CFLAGS	+= -Os
